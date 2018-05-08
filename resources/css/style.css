@@ -1,0 +1,88 @@
+:root {
+  --cafe: #997669;
+  --cafeO: #543f38;
+  --cafeC: #d8a693;
+  --naranja: #E49E34;
+  --naranjaC: #ddaa5d;
+  --naranjaO: #9e6d24;
+  --blanco: #fff;
+  --negro: #000;
+  --trans:rgba(221, 170, 93,0.1);
+}
+*{
+	color:var(--cafe);
+}
+a{
+	color:var(--naranja);
+}
+a:focus{
+	color:var(--naranjaC);
+}
+a:hover{
+	color:var(--naranjaO);
+}
+.logo img{
+	display: block;
+	margin:auto;
+	width: auto;
+	height: 100px;
+}
+.btn-primary:focus, .swal-button--confirm:focus{
+	/* NARANJA CLARO*/
+	box-shadow:0 0 0 0.2rem rgba(221, 170, 93,.5)!important;
+}
+.btn-primary, .swal-button--confirm{
+	background-color: var(--naranja)!important;
+	border: none!important;
+}
+.btn-primary:active,.btn-primary:hover, .swal-button--confirm:active, .swal-button--confirm:hover{
+	background-color: var(--naranjaO)!important;
+}
+.btn-secondary:focus, .swal-button--cancel:focus{
+	/* CAFE CLARO*/
+	box-shadow:0 0 0 0.2rem rgba(216, 166, 147,.5)!important; 
+}
+.btn-secondary, .swal-button--cancel{
+	background-color: var(--cafe)!important;
+	border: none!important;
+	color:var(--blanco);
+}
+.btn-secondary:active,.btn-secondary:hover, .swal-button--cancel:active, .swal-button--cancel:hover{
+	background-color: var(--cafeO)!important;
+}
+.platillo{
+	padding:5px;
+}
+.platillo>div{
+	border:5px solid var(--trans);
+	border-radius: 10px;
+	padding: 5px;
+}
+.platillo .delete{
+	position: absolute;
+	right:15px;
+	padding: 0px 5px;
+}
+.platillo .update{
+	display: block;
+	margin:auto;
+}
+#logout{
+	position: absolute;
+	right: 50px;
+	z-index: 1000;
+}
+#logout:hover{
+	cursor: pointer;
+}
+#navBar li{
+	display: inline-block;
+	margin-right: 25px;
+}
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+	color:var(--cafe);
+}
+#gridMenuContent, #addPlatillo{
+	margin-top:20px;
+	margin-bottom:50px;
+}

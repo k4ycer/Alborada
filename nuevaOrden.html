@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Mesero</title>
+    <link rel="stylesheet" href="resources/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resources/css/style.css">
+    <!-- Icons -->
+    <link href="resources/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <!-- JS -->
+    <script src="resources/js/vendor/popper.min.js"></script>
+    <script src="resources/js/vendor/jquery.min.js"></script>
+    <script src="resources/js/vendor/bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/js/vendor/sweetalert.min.js" ></script>
+
+    <style>
+        a:hover{
+            text-decoration: none;
+        }
+        table{
+            border: 1px solid #999;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        table tr{
+            border: 1px solid #999;
+        }
+        table th, table td{
+            text-align: center;
+            border: 1px solid #999;
+        }
+        .platillos{
+            width: 95%;
+            margin: 20px auto;
+        }
+        #modalAgregarPlatillo{
+            display: none;
+            position: fixed;
+            top: 10%;
+            left: 10%;
+            right: 10%;
+            bottom: 10%;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 3px #999;
+        }
+        #modalAgregarPlatillo h3{
+            text-align: center;
+        }
+        #modalAgregarPlatillo table{
+            width: 100%;
+            text-align: center;
+        }
+        .contenidoModal{
+            position: relative;
+        }
+        #cerrarModal{
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: orangered;
+            color: #fff;
+            padding: 3px;
+            border-radius: 100%;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        #platillosOrdenados{
+            width: 100%;
+            text-align: center;
+        }
+        #agregarPlatillo{
+            background: orangered;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .naranjaRedondo{
+            background: orangered;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+        }
+    </style>
+    
+    <!-- Mios -->    
+    <script>
+        function ValidaSesion(){
+            $.post("php/inicio.php", function(response, status, xhr){
+                if(status=="error"){
+                    alert("Lo sentimos, algo salió mal: " + xhr.status + " " + xhr.statusText);
+                }else if (status == "success") {
+                        if(response == "1"){
+                            
+                        }else{
+                            // Error sesion
+                            swal({
+                                title: "Error en sesión",
+                                text: "Inicia sesion para continuar",
+                                buttons: {
+                                    confirm: true,
+                                },
+                                icon:"error"
+                            }).then(()=>{
+                                window.location.replace("login.html");
+                            });
+                        }
+                }else{
+                    // Error sesion
+                    swal({
+                        title: "Error en sesión",
+                        text: "Inicia sesion para continuar",
+                        buttons: {
+                            confirm: true,
+                        },
+                        icon:"error"
+                    }).then(()=>{
+                        window.location.replace("login.html");
+                    });
+                }
+            });
+            $("#logout").click(()=>{
+                $.post("php/logout.php", function(response, status, xhr){
+                    if(status=="error"){
+                        alert("Lo sentimos, algo salió mal: " + xhr.status + " " + xhr.statusText);
+                    }else if (status == "success") {
+                        window.location.replace("login.html");
+                    }else{
+                        // Es necesario iniciar una sesion
+                        alert("Inicia sesion para continuar");
+                        window.location.replace("login.html");
+                    }
+                })
+            });
+        }
+        ValidaSesion();
+        // Constantes
+        let getCurrentUserUrl = 'php/getCurrentUser.php';
+        let getPlatillosTodosUrl = 'php/getPlatillosTodos.php';
+
+        // Propiedades
+        let currentUserId;
+        let nuevaOrden = {
+            platillos: []
+        };
+
+        $(document).ready(() => {
+
+            setListeners();
+
+            // Get the current user id
+            getCurrentUser()
+            .then(user => currentUserId = user)            
+            .catch(err => console.log(err));
+
+            // getPlatillosOrdenados();
+
+            getPlatillosTodos()
+                .then(platillos => {
+                    for(let platillo of platillos){
+                        $('#platillosTodos').append(`
+                            <tr>
+                                <td>${platillo.nombre}</td>
+                                <td>${platillo.precio}</td>
+                                <td>i</td>
+                                <td><button type="button" class="agregarPlatilloOrden" data-idPlatillo="${platillo.idPlatillo}" data-nombrePlatillo="${platillo.nombre}">Agregar</button></td>
+                            </tr>
+                        `);
+                    }
+                    
+                    $('.agregarPlatilloOrden').click((e) => {
+                        let platilloAgregarId = $(e.currentTarget).attr('data-idPlatillo');
+                        let platilloAgregarNombre = $(e.currentTarget).attr('data-nombrePlatillo');
+
+                        nuevaOrden.platillos.push(platilloAgregarId);
+
+                        $('#platillosOrdenados').append(`
+                            <tr id="platilloAgregado-${platilloAgregarId}">
+                                <td>${platilloAgregarNombre}</td>
+                                <td class="platilloAgregadoCantidad">1</td>
+                                <td><button class="naranjaRedondo sumarCantidad">+</button> <button class="naranjaRedondo restarCantidad">-</button></td>
+                                <td><button class="naranjaRedondo eliminarProducto">x</button></td>
+                            </tr>                
+                        `);
+
+                        $('.sumarCantidad').click((e) => {
+                            let cantidadActuall = $(e.currentTarget).parent('td').parent('tr').children('.platilloAgregadoCantidad');
+                            cantidadActuall.html(Number(cantidadActuall.html()) + 1);
+                        });
+
+                        $('.restarCantidad').click((e) => {
+                            let cantidadActuall = $(e.currentTarget).parent('td').parent('tr').children('.platilloAgregadoCantidad');
+                            cantidadActuall.html(Number(cantidadActuall.html()) - 1);
+                        });
+
+                        $('.eliminarProducto').click((e) => {
+                            let cantidadActuall = $(e.currentTarget).parent('td').parent('tr').remove();                            
+                        });
+
+                        console.log(nuevaOrden);
+                    });
+
+                });
+        });
+
+
+        let setListeners = () => {            
+            $('#agregarPlatillo').click(() => mostrarAgregarPlatilloModal());
+            $('#cerrarModal').click(() => cerrarAgregarPlatilloModal());
+        }
+
+        let getCurrentUser = () => {
+            let res;
+
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: getCurrentUserUrl,
+                    type: 'GET',
+                    success: res => {
+                        res = JSON.parse(res);
+
+                        if(res.status == 1)
+                            resolve(res.userId);
+                        else
+                            reject(res.reason);
+                    },
+                    error: err => {
+                        reject(err);
+                    }
+                });
+            });            
+        };
+
+        let getPlatillosTodos = () => {
+            let res;
+
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: getPlatillosTodosUrl,
+                    type: 'GET',
+                    success: res => {
+                        console.log(res);
+                        res = JSON.parse(res);
+
+                        if(res.status == 1)
+                            resolve(res.platillos);
+                        else
+                            reject(res.reason);
+                    },
+                    error: err => {
+                        reject(err);
+                    }
+                });
+            });
+        };
+
+        let mostrarAgregarPlatilloModal = () => {
+            $('#modalAgregarPlatillo').show();
+        };
+
+        let cerrarAgregarPlatilloModal = () => {
+            $('#modalAgregarPlatillo').hide();
+        };
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <nav>
+                <ul id="navBar">
+                    <li><a href="inicio.html">Inicio</a></li>
+                    <li><a href="adminMenu.html">Administrar Menu</a></li>
+                    <li><a href="mesero.html">Mesero</a></li>
+                </ul>
+            </nav>
+            <button id="logout" class="btn btn-secondary">Cerrar Sesión</button>
+            <!-- TOP -->
+            <div class="row">
+                <div class="col">
+                    <div class="logo">
+                        <img src="resources/images/laAlborada.png">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="row text-center mt-5">
+            <div class="col-md-12">
+                <h3>Nueva orden</h3>
+                          
+                <div class="platillos">
+                    <div class="row">
+                        <div class="col-8">
+                            
+                        </div>
+                        <div class="col-4">
+                            <a href="#" id="agregarPlatillo">Agregar platillos</a>
+                        </div>
+                    </div>
+                    <table id="platillosOrdenados">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Cantidad</th>
+                            <th>Editar Cantidad</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </table>
+                    <button id="botonGuardarOrden">Guardar</button>
+                </div>
+            </div>
+        </div>    
+
+        <div id="modalAgregarPlatillo">
+            <div class="contenidoModal">
+                <h3>Agregar Platillo</h3>
+                <table id="platillosTodos">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Detalles</th>
+                        <th>Agregar</th>
+                    </tr>
+                </table>
+                <a href="#" id="cerrarModal">X</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

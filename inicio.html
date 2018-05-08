@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<title>Inicio</title>
+	<link rel="stylesheet" href="resources/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/css/style.css">
+	<!-- Icons -->
+    <link href="resources/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+	<!-- JS -->
+	<script src="resources/js/vendor/popper.min.js"></script>
+	<script src="resources/js/vendor/jquery.min.js"></script>
+	<script src="resources/js/vendor/bootstrap.min.js"></script>
+	<script type="text/javascript" src="resources/js/vendor/sweetalert.min.js" ></script>
+	<!-- Mios -->
+	<script type="application/javascript">
+
+
+		// JSON.stringify(value: any, replacer?: any, space?: any)
+
+		$(document).ready(function(){
+
+			//Inicialización de alertas
+			$("#alertacorreo").hide();
+			$("#alertaContrasena").hide();
+
+			$.post("php/inicio.php", function(response, status, xhr){
+				if(status=="error"){
+					swal({
+	            		title: "Error",
+	            		text: "Lo sentimos, algo salió mal",
+	            		buttons: {
+	            		    confirm: true,
+	            	  	},
+	            	  	icon:"error"
+	            	});
+				}else if (status == "success") {
+	 				console.log('datos enviados correctamente', response);
+	 				if(response == "1"){
+						//Si hay sesion iniciada
+						swal({
+		            		title: "Bienvenido",
+		            		buttons: {
+		            		    confirm: true,
+		            	  	},
+		            	  	icon:"success"
+		            	})
+
+						$("#tablaUsuarios").html("");
+
+						//Muestra Usuarios
+						$.post("php/getUsers.php", function(response, status, xhr){
+							if(status=="error"){
+							swal({
+			            		title: "Error",
+			            		text: "Lo sentimos, algo salió mal",
+			            		buttons: {
+			            		    confirm: true,
+			            	  	},
+			            	  	icon:"error"
+			            	});
+							}else if (status == "success") {
+								console.log('datos recibidos correctamente', response);
+								var usuarios = JSON.parse(response);
+								// Carga datos de acuerdo a producto
+								for(var i = (usuarios.length-1); i >= 0; i--)
+								{
+									$("#tablaUsuarios").after(
+										"<tr>" +
+											"<td>" + usuarios[i].idUsuario + "</td>" +
+											"<td>" + usuarios[i].nombre + "</td>" +
+											"<td>"+ usuarios[i].correo + "</td>" +
+											"<td>"+ usuarios[i].privilegio + "</td>" +
+											"<td><button class='btn btn-secondary delete-Usuario' data-id='" + usuarios[i].idUsuario + "'>X</button></td>" +
+										"</tr>"
+									);
+								}
+							}
+						});
+
+						$("#nuevoUsuario").click(function(){
+							var correo = $("#correoUsuario").val();
+							var nombre = $("#nombreUsuario").val();
+							var contrasena = $("#contrasenaUsuario").val();
+							var contrasenaConfirm = $("#contrasenaUsuarioConfirm").val();
+
+							//Verificacion email
+							var emailTest = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  							var eTest = emailTest.test(correo);
+
+							//Verificacion contraseña
+  							var conTest = false;
+
+							if ((contrasena == contrasenaConfirm) && (contrasena != "") && (contrasenaConfirm != ""))
+  							{
+  								var conTest = true;
+  							}
+
+							pselect = $("#privilegioSelect option:selected").val();
+
+							if (pselect == 0)
+								var privilegio = "MESERO";
+
+							if (pselect == 1)
+								var privilegio = "COCINERO";
+
+							if (pselect == 2)
+								var privilegio = "ADMINISTRADOR";
+								
+							if (eTest == true && conTest == true && nombre != "" && privilegio != ""){
+								$("#alertacorreo").hide();
+								$("#alertaContrasena").hide();
+
+								$.post("php/insertUser.php", {correo: correo, contrasena: contrasena, nombre:nombre, privilegio:privilegio}, function(response, status, xhr){
+									if(status=="error"){
+										swal({
+						            		title: "Error",
+						            		text: "Lo sentimos, algo salió mal",
+						            		buttons: {
+						            		    confirm: true,
+						            	  	},
+						            	  	icon:"error"
+						            	});
+									}else if (status == "success") {
+										swal({
+						            		title: "Éxito",
+						            		text: "Datos insertados correctamente",
+						            		buttons: {
+						            		    confirm: true,
+						            	  	},
+						            	  	icon:"success"
+						            	}).then(()=>{
+						            		window.location.replace("inicio.html");	
+						            	});
+									}
+								});
+							}else {
+								swal({
+				            		title: "Error",
+				            		text: "Rellena todos los campos para continuar",
+				            		buttons: {
+				            		    confirm: true,
+				            	  	},
+				            	  	icon:"error"
+				            	});
+
+								if (eTest == false){
+									$("#alertacorreo").show();
+								}
+								if (eTest == true){
+									$("#alertacorreo").hide();
+								}
+								if (conTest == false){
+									$("#alertaContrasena").show();
+								}
+								if (conTest == true){
+									$("#alertaContrasena").hide();
+								}
+							}	
+						});
+
+						//Elimina usuario
+						$("body").on("click", ".delete-Usuario", function(event){
+							var id = $(event.target).attr("data-id");
+							$.post("php/deleteUsers.php", {id: id}, function(response, status, xhr){
+								if(status=="error"){
+									swal({
+					            		title: "Error",
+					            		text: "Lo sentimos, algo salió mal",
+					            		buttons: {
+					            		    confirm: true,
+					            	  	},
+					            	  	icon:"error"
+					            	});
+								}else if (status == "success") {
+									console.log('Se elimino el registro: ' + response);
+									swal({
+					            		title: "Éxito",
+					            		text: "Se elimino el registro",
+					            		buttons: {
+					            		    confirm: true,
+					            	  	},
+					            	  	icon:"success"
+					            	}).then(()=>{
+					            		window.location.replace("inicio.html");	
+					            	});
+								}
+							});
+						});
+	 				}else {
+	 					// Es necesario iniciar una sesion
+	 					swal({
+		            		title: "Error en sesión",
+		            		text: "Inicia sesion para continuar",
+		            		buttons: {
+		            		    confirm: true,
+		            	  	},
+		            	  	icon:"error"
+		            	}).then(()=>{
+		            		window.location.replace("login.html");
+		            	});
+	 				}
+				}
+			});
+			$("#logout").click(()=>{
+				$.post("php/logout.php", function(response, status, xhr){
+					if(status=="error"){
+						swal({
+		            		title: "Error",
+		            		text: "Lo sentimos, algo salió mal",
+		            		buttons: {
+		            		    confirm: true,
+		            	  	},
+		            	  	icon:"error"
+		            	});
+					}else if (status == "success") {
+	 					window.location.replace("login.html");
+					}else{
+						// Es necesario iniciar una sesion
+	 					swal({
+		            		title: "Error en sesión",
+		            		text: "Inicia sesion para continuar",
+		            		buttons: {
+		            		    confirm: true,
+		            	  	},
+		            	  	icon:"error"
+		            	}).then(()=>{
+		            		window.location.replace("login.html");
+		            	});
+					}
+				})
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="container">
+		<nav>
+			<ul id="navBar">
+				<li><a href="inicio.html">Inicio</a></li>
+				<li><a href="adminMenu.html">Administrar Menu</a></li>
+				<li><a href="mesero.html">Mesero</a></li>
+			</ul>
+		</nav>
+		<button id="logout" class="btn btn-secondary">Cerrar Sesión</button>
+		<!-- TOP -->
+		<div class="row">
+			<div class="col">
+				<div class="logo">
+					<img src="resources/images/laAlborada.png">
+				</div>
+			</div>
+		</div>
+		<div class="row text-center mt-5">
+			<div class="col-md-12">
+				<h3>Lista de Usuarios</h3></br></br>
+				<table class="table table-striped" id="tablaProductos">
+					<thead>
+						<th class="text-center">No. Usuario</th>
+						<th class="text-center">Nombre</th>
+						<th class="text-center">Correo</th>
+						<th class="text-center">Privilegio</th>
+						<th class="text-center">Eliminar</th>
+					</thead>
+					<tbody id="tablaUsuarios">
+						<tr>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row text-center" style="margin-top: 30px;">
+			<div class="col-md-12">
+				<input style="width: 100%" type="button" class="btn btn-primary" data-toggle="modal" data-target="#agregar" value="Añadir Usuario">
+			</div>
+
+			<!-- Modal -->
+			<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-hidden="true">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="exampleModalLabel">Añadir Usuario</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			      	<form>
+	      	          <div class="form-group">
+	      	            <label class="col-form-label">Nombre:</label>
+	      	            <input type="text" class="form-control" id="nombreUsuario" placeholder="Nombre">
+	      	          </div>
+	      	          <div class="form-group">
+	      	            <label class="col-form-label">Contraseña:</label>
+	      	            <input type="password" class="form-control" id="contrasenaUsuario" placeholder="Contraseña">
+	      	          </div>
+	      	          <div class="form-group">
+	      	            <label class="col-form-label">Confirma contraseña:</label>
+	      	            <label id="alertaContrasena" style="color: red;">Las contraseñas no coinciden o es demasiado corta</label>
+	      	            <input type="password" class="form-control" id="contrasenaUsuarioConfirm" placeholder="Contraseña">
+	      	          </div>
+	      	          <div class="form-group">
+	      	            <label id="nombreUsuario" class="col-form-label">Correo:</label>
+	      	           	<label id="alertacorreo" style="color: red;">Correo inváido</label>
+	      	            <input type="text" class="form-control" id="correoUsuario" placeholder="Correo">
+	      	          </div>
+	      	          <div class="form-group">
+	      	            <label id="nombreUsuario" class="col-form-label">Privilegio:</label>
+	      	            <select class="form-control" id="privilegioSelect">
+  	                  		<option value="0">MESERO</option>
+  	                  		<option value="1">COCINERO</option>
+  	                  		<option value="2">ADMIN</option>
+	      	            </select>
+	      	          </div>
+	      	        </form>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+			        <button id="nuevoUsuario" type="button" class="btn btn-primary">Crear</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>	
+		</div>
+	</div>
+</body>
+</html>
