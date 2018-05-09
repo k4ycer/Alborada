@@ -4,44 +4,21 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<title>Login</title>
-	<link rel="stylesheet" href="resources/css/bootstrap.min.css">
-	<link rel="stylesheet" href="resources/css/style.css">
+	<link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+	<link rel="stylesheet" href="css/style.css">
 	<!-- Icons -->
-    <link href="resources/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="css/vendor/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
 	<!-- JS -->
-	<script src="resources/js/vendor/popper.min.js"></script>
-	<script src="resources/js/vendor/jquery.min.js"></script>
-	<script src="resources/js/vendor/bootstrap.min.js"></script>
-	<!-- Mios -->
-	<script type="application/javascript">
-		$(document).ready(function(){
-			$("#entrar").click(function(){
-				var usuario = $("#usuario").val();
-				var contrasena = $("#contra").val();
-
-				$.post("php/login.php", {user: usuario, password: contrasena}, function(response, status, xhr){
-					if(status=="error"){
-						alert("Lo sentimos, algo salió mal: " + xhr.status + " " + xhr.statusText);
-					}else if (status == "success") {
-		 				console.log('datos enviados, usuario', response);
-		 				if(response == "correcto"){
-		 					window.location.replace("inicio.html");
-		 				}
-		 				else {
-		 					alert("Usuario o contraseña inválidos")
-		 				}
-					}
-				});
-			});
-		});
-	</script>
+	<script src="js/vendor/popper.min.js"></script>
+	<script src="js/vendor/jquery.min.js"></script>
+	<script src="js/vendor/bootstrap.min.js"></script>	
 </head>
 <body>
 	<div class="container-fluid">
 		<div class="row" style="margin-top: 40px;">
 			<div class="col-md-12 text-center">
-				<img src="resources/images/laAlborada.png">
+				<img src="img/laAlborada.png">
 			</div>	
 		</div>
 		<div class="row" style="margin-top: 40px;">
@@ -60,5 +37,17 @@
 			</div>
 		</div>
 	</div>
+
+	<script type="text/javascript" src="js/vendor/sweetalert.min.js"></script>
+	<script type="text/javascript" src="js/vendor/system.js"></script>
+	<script type="text/javascript" src="js/tsc.js"></script>
+	<script>
+		SystemJS.import("controllers/loginController")
+			.then(modulo => {
+				let loginController = new modulo.LoginController();
+				
+				loginController.init();
+			});		
+	</script>
 </body>
 </html>

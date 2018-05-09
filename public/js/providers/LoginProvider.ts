@@ -1,3 +1,5 @@
+import Respuesta from "../models/Respuesta";
+
 declare var swal: any;
 
 export class LoginProvider{
@@ -31,6 +33,42 @@ export class LoginProvider{
                     reject();
                 }
             });
+        });
+    }
+
+
+    /////////////////////////////////////////
+    //
+    // iniciarSesion
+    //
+    /////////////////////////////////////////
+    iniciarSesion(usuario: string, contrasena: string): Promise<Respuesta>{
+        console.log("iniciando sesion 2");
+        let formData: FormData;
+
+        formData = new FormData();
+        formData.append("user", usuario);
+        formData.append("password", contrasena);
+
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "../php/login.php",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: async response => {          
+                    console.log(response);
+                    if(response == "correcto"){
+                        resolve(new Respuesta(true, ""));
+                    }else{
+                        reject(new Respuesta(false, "Usuario o contraseña invalidos"));
+                    }
+                },
+                error: async error => {
+                    reject(new Respuesta(false, "Hubo un error al iniciar la sesión"));                                
+                }
+            });           
         });
     }
 

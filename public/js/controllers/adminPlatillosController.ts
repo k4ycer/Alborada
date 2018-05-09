@@ -1,6 +1,6 @@
 import Platillo from '../models/Platillo';
-import { MenuProvider } from '../providers/MenuProvider';
 import Respuesta from '../models/Respuesta';
+import { MenuProvider } from '../providers/MenuProvider';
 import { LoginProvider } from '../providers/LoginProvider';
 declare var swal: any;
 
