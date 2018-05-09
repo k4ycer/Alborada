@@ -86,3 +86,17 @@ a:hover{
 	margin-top:20px;
 	margin-bottom:50px;
 }
+#excelForm h2{
+	text-align: center;
+}
+
+#excelForm button{
+	display: block;
+	margin:auto;
+	margin-top: 10px;
+}
+#excelForm input{
+	display: block;
+	margin:auto;
+	margin-top:20px;
+}

@@ -46,13 +46,16 @@
 					<li class="nav-item">
 						<a class="nav-link" id="add-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add" aria-selected="false">Añadir platillo</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="excel-tab" data-toggle="tab" href="#excelTab" role="tab" aria-controls="excel" aria-selected="false">Añadir excel</a>
+					</li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
 					<div class="tab-pane fade show active" id="menu" role="tabpanel" aria-labelledby="menu-tab">
 						<!-- Lista menu -->
 						<div id="gridMenu" class="col">
 							<div id="gridMenuContent" class="row">
-
+				
 							</div>
 						</div>
 					</div>
@@ -81,6 +84,16 @@
 									<textarea required="required" class="form-control" id="platilloIngredientes" name="ingredientes" rows="4"></textarea>
 								</div>
 								<button type="submit" class="btn btn-primary">Añadir</button>
+							</form>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="excelTab" role="tabpanel" aria-labelledby="menu-tab">
+						<div class="col">
+							<form id="excelForm">
+								<h2 style="color:#384349">Actualizar base de datos</h2>
+								<input id="excel" class="btn btn-secondary" name="archivo" type="file">
+								<br>
+								<button class="btn btn-primary" type="submit">Subir</button>
 							</form>
 						</div>
 					</div>
@@ -124,17 +137,6 @@
 				
 				adminPlatillosController.init();
 			});	
-		// System.config({
-		// 	baseURL: "/",
-		// 	defaultJSExtensions: 'js',
-		// 	transpiler: false,
-		// 	packages: {
-		// 		'app': {
-		// 			format: 'register',
-		// 			defaultExtension: 'js'
-		// 		}
-		// 	}
-		// });	
 	</script>
 </body>
 
