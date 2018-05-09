@@ -252,4 +252,26 @@ export class MenuProvider {
 		});
 		
 	}
+
+	/////////////////////////////////////////
+	//
+	// getCurrencies
+	//
+	/////////////////////////////////////////
+	getCurrencies(): Promise<any> {
+		return new Promise((resolve, reject) => {
+			$.ajax({
+				url: "http://data.fixer.io/api/latest?access_key=39f2af52682a23f8042ac33919154a2e&format=1",
+				type: "GET",
+				data: "",
+				success: data => {
+					resolve(data);
+				},
+				error: e => {
+					// Error in get
+					reject(new Respuesta(false, "Ocurrio un problema, lo sentimos. No pudimos obtener las monedas."))
+				}
+			});
+		});
+	}
 }

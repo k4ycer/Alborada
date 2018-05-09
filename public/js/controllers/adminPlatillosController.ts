@@ -7,6 +7,7 @@ declare var swal: any;
 export class AdminPlatillosController{
 
     platillos: Platillo[];
+    currencies: any;
 
     constructor(
         private loginProvider: LoginProvider,
@@ -27,6 +28,8 @@ export class AdminPlatillosController{
         this.setListeners();
 
         this.getPlatillos();
+
+        this.getCurrencies();
     }
 
     /////////////////////////////////////////
@@ -108,7 +111,35 @@ export class AdminPlatillosController{
             e.preventDefault();
             this.updatePlatillosExcel();
         });
-    }    
+
+        $("#currencySelect").change(()=>{
+            this.changeCurrency();   
+        });
+    }  
+    
+    
+    changeCurrency(){
+        console.log($("#currencySelect").val());
+        let multiplier : any;
+        switch ($("#currencySelect").val()) {
+            case "EUR": 
+                multiplier = 1;
+                break;
+            case "MXN":
+                multiplier = this.currencies.rates.MXN;
+                break;
+            case "USD":
+                multiplier = this.currencies.rates.USD;
+                break;
+        
+            default:
+                break;
+        }
+        $(".platillo").each((index, elem) => {
+            let precioEUR = parseFloat($(elem).attr("data-precioMXN")) / parseFloat(this.currencies.rates.MXN);
+            $(elem).find("small").text("$ " +(precioEUR*parseFloat(multiplier)).toFixed(2));
+        });
+    }
 
 
     /////////////////////////////////////////
@@ -352,7 +383,7 @@ export class AdminPlatillosController{
             platillo = platillos[i];
             
 			htmlContent += `
-				<div class="platillo col-6 col-sm-6 col-md-4 col-lg-4 col-xl-3">
+				<div class="platillo col-6 col-sm-6 col-md-4 col-lg-4 col-xl-3" data-precioMXN="${platillo.precio}">
 					<div>
 						<button data-id="${platillo.id}" class="delete btn btn-secondary">x</button>
 						<h5 class="text-center">${platillo.nombre}</h5>
@@ -433,6 +464,28 @@ export class AdminPlatillosController{
             });
         }		
     }
+
+    /////////////////////////////////////////
+    //
+    // getCurrencies
+    //
+    /////////////////////////////////////////
+    public async getCurrencies() {
+        try {
+            this.currencies = await this.menuProvider.getCurrencies();
+            console.log(this.currencies);
+        } catch (respuesta) {
+            swal({
+                title: "Error obteniendo monedas",
+                text: respuesta.message,
+                buttons: {
+                    confirm: true,
+                },
+                icon: "error"
+            });
+        }
+    }
+
 
     /////////////////////////////////////////
     //
