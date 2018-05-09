@@ -24,6 +24,39 @@ export class UserProvider{
         });
     }
 
+    /////////////////////////////////////////
+    //
+    // updateUsuariosExcel
+    //
+    /////////////////////////////////////////
+    updateUsuariosExcel(file: any): Promise<Respuesta> {
+        var form_data = new FormData();
+        form_data.append("archivo", file)
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: '../php/UpdateUsuarioData.php',
+                dataType: 'text',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                success: function (data) {
+                    if (data == "Exito") {
+                        resolve(new Respuesta(true, ""));
+                    } else {
+                        reject(new Respuesta(false, "Error actualizando"))
+                    }
+                    console.log(data);
+                },
+                error: function (e) {
+                    // Error in upload
+                    reject(new Respuesta(false, "Error actualizando"))
+                }
+            });
+        });
+    }
+
 
     insertUsuario(usuario: Usuario): Promise<Respuesta>{
         let formData: FormData;
