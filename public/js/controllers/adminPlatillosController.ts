@@ -101,7 +101,13 @@ export class AdminPlatillosController{
 
             // Reset the fields
             form.reset();
-        });    
+        });
+
+        // Update platillos excel
+        $("#excelForm").submit((e) => {
+            e.preventDefault();
+            this.updatePlatillosExcel();
+        });
     }    
 
 
@@ -426,6 +432,54 @@ export class AdminPlatillosController{
                 icon:"error"
             });
         }		
-    }    
+    }
+
+    /////////////////////////////////////////
+    //
+    // updatePlatillosExcel
+    //
+    /////////////////////////////////////////
+    public async updatePlatillosExcel() {
+        swal({
+            title: "Actualizar platillo",
+            text: "¿Estás seguro que deseas actualizar el menu con la información proporcionada?",
+            buttons: {
+                cancel: true,
+                confirm: {
+                    closeModal: false
+                },
+            },
+            icon: "warning"
+        }).then(async (value: any) => {
+            if (value === true) {
+                try {
+                    var file_data = $("#excel").prop("files")[0];
+                    await this.menuProvider.updatePlatillosExcel(file_data);
+
+                    swal({
+                        title: "Platillos añadidos",
+                        text: "Los platillos se han añadido al menú correctamente",
+                        buttons: {
+                            confirm: true,
+                        },
+                        icon: "success"
+                    });
+
+                    this.getPlatillos();
+                } catch (respuesta) {
+                    console.log(respuesta);
+                    swal({
+                        title: "Error actualizando",
+                        text: "Algo salio mal, intentalo mas tarde",
+                        buttons: {
+                            confirm: true,
+                        },
+                        icon: "error"
+                    });
+                }
+            }
+        });
+    }
+
 
 }
