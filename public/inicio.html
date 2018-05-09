@@ -33,85 +33,111 @@
 				</div>
 			</div>
 		</div>
-		<div class="row text-center mt-5">
-			<div class="col-md-12">
-				<h3>Lista de Usuarios</h3></br></br>
-				<table class="table table-striped" id="tablaProductos">
-					<thead>
-						<th class="text-center">No. Usuario</th>
-						<th class="text-center">Nombre</th>
-						<th class="text-center">Contraseña</th>
-						<th class="text-center">Correo</th>
-						<th class="text-center">Privilegio</th>
-						<th class="text-center">Eliminar</th>
-					</thead>
-					<tbody id="tablaUsuarios">
-						<tr>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+		<!-- TABS -->
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link" id="add-tab" data-toggle="tab" href="#add" role="tab" aria-controls="add" aria-selected="false">Lista usuarios</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="excel-tab" data-toggle="tab" href="#excelTab" role="tab" aria-controls="excel" aria-selected="false">Añadir excel</a>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="add" role="tabpanel" aria-labelledby="add-tab">
+				<div class="row text-center mt-5">
+					<div class="col-md-12">
+						<h3>Lista de Usuarios</h3>
+						</br>
+						</br>
+						<table class="table table-striped" id="tablaProductos">
+							<thead>
+								<th class="text-center">No. Usuario</th>
+								<th class="text-center">Nombre</th>
+								<th class="text-center">Contraseña</th>
+								<th class="text-center">Correo</th>
+								<th class="text-center">Privilegio</th>
+								<th class="text-center">Eliminar</th>
+							</thead>
+							<tbody id="tablaUsuarios">
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row text-center" style="margin-top: 30px;">
+					<div class="col-md-12">
+						<input style="width: 100%" type="button" class="btn btn-primary" data-toggle="modal" data-target="#agregar" value="Añadir Usuario">
+					</div>
+				
+					<!-- Modal -->
+					<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Añadir Usuario</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<form>
+										<div class="form-group">
+											<label class="col-form-label">Nombre:</label>
+											<input type="text" class="form-control" id="nombreUsuario" placeholder="Nombre">
+										</div>
+										<div class="form-group">
+											<label class="col-form-label">Contraseña:</label>
+											<input type="password" class="form-control" id="contrasenaUsuario" placeholder="Contraseña">
+										</div>
+										<div class="form-group">
+											<label class="col-form-label">Confirma contraseña:</label>
+											<label id="alertaContrasena" style="color: red; display: none;">Las contraseñas no coinciden o es demasiado corta</label>
+											<input type="password" class="form-control" id="contrasenaUsuarioConfirm" placeholder="Contraseña">
+										</div>
+										<div class="form-group">
+											<label id="nombreUsuario" class="col-form-label">Correo:</label>
+											<label id="alertacorreo" style="color: red; display: none;">Correo inválido</label>
+											<input type="mail" type="required" class="form-control" id="correoUsuario" placeholder="Correo">
+										</div>
+										<div class="form-group">
+											<label id="nombreUsuario" class="col-form-label">Privilegio:</label>
+											<select class="form-control" id="privilegioSelect">
+												<option value="0">MESERO</option>
+												<option value="1">COCINERO</option>
+												<option value="2">ADMIN</option>
+											</select>
+										</div>
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+									<button id="nuevoUsuario" type="button" class="btn btn-primary">Crear</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="excelTab" role="tabpanel" aria-labelledby="menu-tab">
+				<div class="col">
+					<form id="excelForm">
+						<h2 style="color:#384349">Actualizar usuarios</h2>
+						<input id="excel" class="btn btn-secondary" name="archivo" type="file">
+						<br>
+						<button class="btn btn-primary" type="submit">Subir</button>
+					</form>
+				</div>
 			</div>
 		</div>
-		<div class="row text-center" style="margin-top: 30px;">
-			<div class="col-md-12">
-				<input style="width: 100%" type="button" class="btn btn-primary" data-toggle="modal" data-target="#agregar" value="Añadir Usuario">
-			</div>
-
-			<!-- Modal -->
-			<div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-hidden="true">
-			  <div class="modal-dialog" role="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <h5 class="modal-title" id="exampleModalLabel">Añadir Usuario</h5>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-			          <span aria-hidden="true">&times;</span>
-			        </button>
-			      </div>
-			      <div class="modal-body">
-							<form>
-								<div class="form-group">
-									<label class="col-form-label">Nombre:</label>
-									<input type="text" class="form-control" id="nombreUsuario" placeholder="Nombre">
-								</div>
-								<div class="form-group">
-									<label class="col-form-label">Contraseña:</label>
-									<input type="password" class="form-control" id="contrasenaUsuario" placeholder="Contraseña">
-								</div>
-								<div class="form-group">
-									<label class="col-form-label">Confirma contraseña:</label>
-									<label id="alertaContrasena" style="color: red; display: none;" >Las contraseñas no coinciden o es demasiado corta</label>
-									<input type="password" class="form-control" id="contrasenaUsuarioConfirm" placeholder="Contraseña">
-								</div>
-								<div class="form-group">
-									<label id="nombreUsuario" class="col-form-label">Correo:</label>
-									<label id="alertacorreo" style="color: red; display: none;">Correo inválido</label>
-									<input type="mail" type="required" class="form-control" id="correoUsuario" placeholder="Correo">
-								</div>
-								<div class="form-group">
-									<label id="nombreUsuario" class="col-form-label">Privilegio:</label>
-									<select class="form-control" id="privilegioSelect">
-										<option value="0">MESERO</option>
-										<option value="1">COCINERO</option>
-										<option value="2">ADMIN</option>
-									</select>
-								</div>
-							</form>
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-			        <button id="nuevoUsuario" type="button" class="btn btn-primary">Crear</button>
-			      </div>
-			    </div>
-			  </div>
-			</div>	
-		</div>
+		
 	</div>
 
 	<script type="text/javascript" src="js/vendor/system.js"></script>

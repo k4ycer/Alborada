@@ -38,6 +38,12 @@ export class InicioController{
         $("#nuevoUsuario").click( () => {
             this.insertarUsuario();
         });
+
+        // Update platillos excel
+        $("#excelForm").submit((e) => {
+            e.preventDefault();
+            this.updateUsuariosExcel();
+        });
     }
 
 
@@ -179,6 +185,53 @@ export class InicioController{
                 $("#alertaContrasena").hide();
             }
         }
+    }
+
+    /////////////////////////////////////////
+    //
+    // updateUsuariosExcel
+    //
+    /////////////////////////////////////////
+    public async updateUsuariosExcel() {
+        swal({
+            title: "Actualizar usuarios",
+            text: "¿Estás seguro que deseas actualizar el personal con la información proporcionada?",
+            buttons: {
+                cancel: true,
+                confirm: {
+                    closeModal: false
+                },
+            },
+            icon: "warning"
+        }).then(async (value: any) => {
+            if (value === true) {
+                try {
+                    var file_data = $("#excel").prop("files")[0];
+                    await this.userProvider.updateUsuariosExcel(file_data);
+
+                    swal({
+                        title: "Usuarios añadidos",
+                        text: "Los usuarios se han añadido al menú correctamente",
+                        buttons: {
+                            confirm: true,
+                        },
+                        icon: "success"
+                    });
+
+                    this.getUsuarios();
+                } catch (respuesta) {
+                    console.log(respuesta);
+                    swal({
+                        title: "Error actualizando",
+                        text: "Algo salio mal, intentalo mas tarde",
+                        buttons: {
+                            confirm: true,
+                        },
+                        icon: "error"
+                    });
+                }
+            }
+        });
     }
 
 }
