@@ -6,6 +6,38 @@ declare var swal: any;
 export class UserProvider{
     constructor(){}
 
+
+    ////////////////////////////////////////
+    //
+    // getCurrentUserId
+    //
+    /////////////////////////////////////////
+    getCurrentUserId(): Promise<number>{
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "../php/getCurrentUser.php",
+                type: 'GET',
+                success: res => {
+                    res = JSON.parse(res);
+
+                    if(res.status == 1)
+                        resolve(res.userId);
+                    else
+                        reject(res.reason);
+                },
+                error: err => {
+                    reject(err);
+                }
+            });
+        }); 
+    }
+
+    
+    ////////////////////////////////////////
+    //
+    // getUsuarios
+    //
+    /////////////////////////////////////////
     getUsuarios(): Promise<Usuario[]>{
         let usuarios: Usuario[];
 
@@ -25,6 +57,11 @@ export class UserProvider{
     }
 
 
+    ////////////////////////////////////////
+    //
+    // insertUsuario
+    //
+    /////////////////////////////////////////
     insertUsuario(usuario: Usuario): Promise<Respuesta>{
         let formData: FormData;
 
