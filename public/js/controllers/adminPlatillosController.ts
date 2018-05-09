@@ -65,7 +65,7 @@ export class AdminPlatillosController{
         });
 
         // Open update platillo modal 
-        $("#gridMenuContent").off("click").on("click", ".update", (e)=>{
+        $("#gridMenuContent").on("click", ".update", (e)=>{
             let elem = $(e.target);
             this.openUpdatePlatilloModal(this.platillos[Number(elem.attr("data-index"))]);
         });
