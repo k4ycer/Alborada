@@ -5,8 +5,8 @@ header("Access-Control-Allow-Origin: *");
 error_reporting(0);
 require_once('Helpers.php');
 	
-	$uploads_dir = '../resources/images/platillos';
-	$image_dir = 'resources/images/platillos';
+	$uploads_dir = 'uploads/images/platillos';
+	$image_dir = 'php/uploads/images/platillos';
 
 	$object = new stdClass();
 	if(!isset($_FILES['imagen'])){

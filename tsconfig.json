@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outFile": "build/js/tsc.js",
+        "sourceMap": true,
+        "target": "es6"
+    },
+    "include": [
+        "public/js/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts"
+    ]
+}

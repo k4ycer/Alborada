@@ -1,0 +1,1 @@
+public\js\controllers\adminPlatillosController.ts public\js\models\Platillo.ts public\js\models\Respuesta.ts public\js\providers\MenuProvider.ts public\js\providers\Util.ts --sourcemap --removeComments --noImplicitAny --preserveConstEnums --target ES6 --module system --out build/js/tsc.js
