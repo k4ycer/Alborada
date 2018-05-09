@@ -5,16 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>Mesero</title>
-    <link rel="stylesheet" href="resources/css/bootstrap.min.css">
-    <link rel="stylesheet" href="resources/css/style.css">
+    <link rel="stylesheet" href="css/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <!-- Icons -->
-    <link href="resources/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="css/vendor/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <!-- JS -->
-    <script src="resources/js/vendor/popper.min.js"></script>
-    <script src="resources/js/vendor/jquery.min.js"></script>
-    <script src="resources/js/vendor/bootstrap.min.js"></script>
-    <script type="text/javascript" src="resources/js/vendor/sweetalert.min.js" ></script>
+    <script src="js/vendor/popper.min.js"></script>
+    <script src="js/vendor/jquery.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/vendor/sweetalert.min.js" ></script>
 
     <style>
         .ordenesActuales{
@@ -29,132 +29,6 @@
             padding: 20px 0;
         }
     </style>
-    
-    <!-- Mios -->    
-    <script>
-        function ValidaSesion(){
-            $.post("php/inicio.php", function(response, status, xhr){
-                if(status=="error"){
-                    alert("Lo sentimos, algo salió mal: " + xhr.status + " " + xhr.statusText);
-                }else if (status == "success") {
-                        if(response == "1"){
-                            
-                        }else{
-                            // Error sesion
-                            swal({
-                                title: "Error en sesión",
-                                text: "Inicia sesion para continuar",
-                                buttons: {
-                                    confirm: true,
-                                },
-                                icon:"error"
-                            }).then(()=>{
-                                window.location.replace("login.html");
-                            });
-                        }
-                }else{
-                    // Error sesion
-                    swal({
-                        title: "Error en sesión",
-                        text: "Inicia sesion para continuar",
-                        buttons: {
-                            confirm: true,
-                        },
-                        icon:"error"
-                    }).then(()=>{
-                        window.location.replace("login.html");
-                    });
-                }
-            });
-            $("#logout").click(()=>{
-                $.post("php/logout.php", function(response, status, xhr){
-                    if(status=="error"){
-                        alert("Lo sentimos, algo salió mal: " + xhr.status + " " + xhr.statusText);
-                    }else if (status == "success") {
-                        window.location.replace("login.html");
-                    }else{
-                        // Es necesario iniciar una sesion
-                        alert("Inicia sesion para continuar");
-                        window.location.replace("login.html");
-                    }
-                })
-            });
-        }
-        ValidaSesion();
-        // Constantes
-        let getCurrentUserUrl = 'php/getCurrentUser.php';
-        let getOrdenesByMeseroUrl = 'php/getOrdenesByMesero.php';
-
-        // Propiedades
-        let currentUserId;
-
-        $(document).ready(() => {
-
-            getCurrentUser()
-            .then(user => currentUserId = user)
-            .then(() => getOrdersByMesero(currentUserId, 'PENDIENTE'))
-            .then((tickets) => {
-                for(let ticket of tickets){
-                    $('#listaOrdenesActuales').append(`
-                        <div class="col-4">
-                            <div class="ordenActual">Orden ${ticket.idTicket}</div>
-                        </div>
-                    `);
-                }
-            })
-            .catch(err => console.log(err));
-        });
-
-        let getCurrentUser = () => {
-            let res;
-
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: getCurrentUserUrl,
-                    type: 'GET',
-                    success: res => {
-                        res = JSON.parse(res);
-
-                        if(res.status == 1)
-                            resolve(res.userId);
-                        else
-                            reject(res.reason);
-                    },
-                    error: err => {
-                        reject(err);
-                    }
-                });
-            });            
-        };
-
-        let getOrdersByMesero = (userId, orderStatus) => {
-            let res;
-
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    url: getOrdenesByMeseroUrl,
-                    type: 'GET',
-                    data: {
-                        userId: userId,
-                        orderStatus: orderStatus
-                    },
-                    success: res => {
-                        console.log(res);
-                        res = JSON.parse(res);
-
-                        if(res.status == 1)
-                            resolve(res.tickets);
-                        else
-                            reject(res.reason);
-                    },
-                    error: err => {
-                        reject(err);
-                    }
-                });
-            });
-        };
-    </script>
-
 </head>
 
 <body>
@@ -172,7 +46,7 @@
             <div class="row">
                 <div class="col">
                     <div class="logo">
-                        <img src="resources/images/laAlborada.png">
+                        <img src="img/laAlborada.png">
                     </div>
                 </div>
             </div>
@@ -194,7 +68,16 @@
             </div>
         </div> 
     </div>
-       
+    <script type="text/javascript" src="js/vendor/system.js"></script>
+	<script type="text/javascript" src="js/tsc.js"></script>
+	<script>
+		SystemJS.import("controllers/meseroController")
+			.then(modulo => {
+				let meseroController = new modulo.MeseroController();
+				
+				meseroController.init();
+			});		
+	</script>
 </body>
 
 </html>
